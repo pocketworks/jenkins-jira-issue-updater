@@ -294,7 +294,7 @@ public class IssueUpdaterResultsRecorder extends Recorder {
      */
     @Override
     public String getDisplayName() {
-      return "JIRA Issue Results Updater";
+      return "Pocketworks Jira";
     }
   }
 

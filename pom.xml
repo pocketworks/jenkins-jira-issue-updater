@@ -1,10 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>info.bluefloyd.jenkins</groupId>
-  <artifactId>jenkins-jira-issue-updater</artifactId>
-  <version>1.15.1.2</version>
+  <artifactId>pocketworks-jira</artifactId>
+  <version>1.15.1.4</version>
   <packaging>hpi</packaging>
-  <name>Jenkins Jira Issue Updater</name>
+  <name>Pocketworks Jira</name>
   <description>Jenkins plugin which can update Jira issues in a maven or a freestyle job.</description>
   <url>https://wiki.jenkins-ci.org/display/JENKINS/Jira+Issue+Updater+Plugin</url>
 

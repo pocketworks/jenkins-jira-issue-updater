@@ -7,6 +7,10 @@ import info.bluefloyd.jira.model.IssueSummary;
 import info.bluefloyd.jira.model.IssueSummaryList;
 import info.bluefloyd.jira.model.RestResult;
 import info.bluefloyd.jira.model.TransitionList;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSession;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -35,7 +39,7 @@ public class RESTClient {
   private final String userName;
   private final String password;
   private final PrintStream logger;
-  private final boolean debug = false;
+  private final boolean debug = true;
   private final String basicAuthToken;
 
   // Constructor - set up required information
@@ -193,7 +197,7 @@ public class RESTClient {
 
     String issuePath = baseAPIUrl + REST_ADD_COMMENT_PATH.replaceAll("\\{issue-key\\}", issue.getKey());
     if (debug) {
-      logger.println("***Using this URL for adding the comment: " + issuePath);
+      logger.println("***v1 Using this URL for adding the comment: " + issuePath);
     }
 
     URL addCommentURL;
@@ -363,11 +367,12 @@ public class RESTClient {
 
     RestResult result = new RestResult();
 
-    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+    HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
     conn.setRequestMethod("GET");
     conn.setRequestProperty("Accept", "application/json");
     conn.setRequestProperty("Content-Type", "application/json");
     conn.setRequestProperty("Authorization", basicAuthToken);
+    conn.setHostnameVerifier(hostnameVerifier);
 
     BufferedReader br = new BufferedReader(new InputStreamReader(
             (conn.getInputStream())));
@@ -405,12 +410,13 @@ public class RESTClient {
 
     byte[] postDataBytes = bodydata.getBytes("UTF-8");
 
-    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+    HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
     conn.setRequestMethod("POST");
     conn.setRequestProperty("Accept", "application/json");
     conn.setRequestProperty("Content-Type", "application/json");
     conn.setRequestProperty("Authorization", basicAuthToken);
     conn.setRequestProperty("Content-Length", String.valueOf(postDataBytes.length));
+    conn.setHostnameVerifier(hostnameVerifier);
 
     conn.setDoOutput(true);
     OutputStream os = conn.getOutputStream();
@@ -452,12 +458,13 @@ public class RESTClient {
     RestResult result = new RestResult();
     byte[] postDataBytes = bodydata.getBytes("UTF-8");
 
-    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+    HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
     conn.setRequestMethod("PUT");
     conn.setRequestProperty("Accept", "application/json");
     conn.setRequestProperty("Content-Type", "application/json");
     conn.setRequestProperty("Authorization", basicAuthToken);
     conn.setRequestProperty("Content-Length", String.valueOf(postDataBytes.length));
+    conn.setHostnameVerifier(hostnameVerifier);
 
     conn.setDoOutput(true);
     OutputStream os = conn.getOutputStream();
@@ -484,4 +491,13 @@ public class RESTClient {
 
     return result;
   }
+
+  static HostnameVerifier hostnameVerifier = new HostnameVerifier() {
+    @Override
+    public boolean verify(String hostname, SSLSession session) {
+      HostnameVerifier hv =
+              HttpsURLConnection.getDefaultHostnameVerifier();
+      return hv.verify("atlassian.net", session);
+    }
+  };
 }
